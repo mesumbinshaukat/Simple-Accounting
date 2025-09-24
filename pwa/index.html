@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accounting</title>
+  <link rel="manifest" href="/simple_accounting/pwa/manifest.json">
+  <meta name="theme-color" content="#0ea5e9">
+  <link rel="stylesheet" href="/simple_accounting/assets/style.css">
+  <style>
+    .app-shell{max-width:1100px;margin:0 auto}
+    .link{color:#0ea5e9;cursor:pointer;text-decoration:underline}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <h1 class="page-title" style="margin-right:auto;">Accounting (PWA)</h1>
+    <a class="btn" href="/simple_accounting/index.php">PHP UI</a>
+  </div>
+  <main class="main app-shell">
+    <div id="root"></div>
+  </main>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/simple_accounting/pwa/sw.js');
+    }
+  </script>
+  <script src="/simple_accounting/pwa/app.js"></script>
+</body>
+</html>

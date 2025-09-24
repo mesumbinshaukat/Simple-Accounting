@@ -41,7 +41,7 @@ return [
     'db_user' => $env['DB_USER'] ?? 'root',
     'db_pass' => $env['DB_PASS'] ?? '', // Default XAMPP MySQL has empty password
     'db_name' => $env['DB_NAME'] ?? 'simple_accounting',
-    'app_name' => $env['APP_NAME'] ?? 'Simple Accounting',
+    'app_name' => $env['APP_NAME'] ?? 'Accounting',
     // optional admin user bootstrap
     'admin_user' => $env['ADMIN_USER'] ?? null,
     'admin_pass' => $env['ADMIN_PASS'] ?? null,

@@ -1,4 +1,4 @@
-# Simple Accounting (Core PHP)
+# Accounting (Core PHP)
 
 A minimal, clean, and responsive accounting dashboard built with core PHP and MySQL (XAMPP). Create accounts, post debit/credit transactions, and see balances in a simple table with light theme and toast alerts.
 
@@ -38,7 +38,7 @@ return [
   'db_user' => 'root',
   'db_pass' => '',
   'db_name' => 'simple_accounting',
-  'app_name' => 'Simple Accounting',
+  'app_name' => 'Accounting',
 ];
 ```
 
@@ -68,6 +68,40 @@ If your MySQL password differs, update `'db_pass'` accordingly.
 - Paths assume the app lives at `/simple_accounting/` under your Apache root.
 - Uses `mysqli` and prepared statements for inserts/selects.
 - Toasts are minimal vanilla JS, no external libraries.
+
+## New: REST API and PWA
+
+This project now includes a local REST API and a React-based PWA (keeps the same simple UI and styling):
+
+- Web UI (PHP): `http://localhost/simple_accounting/`
+- PWA (React): `http://localhost/simple_accounting/pwa/index.html`
+
+### REST API Endpoints
+
+- POST `/simple_accounting/api/login.php` — `{ username, password }`
+- POST `/simple_accounting/api/logout.php`
+- POST `/simple_accounting/api/register.php` — `{ username, password }`
+- GET `/simple_accounting/api/me.php`
+- GET `/simple_accounting/api/accounts.php`
+- POST `/simple_accounting/api/accounts.php` — `{ name }`
+- GET `/simple_accounting/api/transactions.php?account_id=ID`
+- POST `/simple_accounting/api/transactions.php` — `{ account_id, action: 'credit'|'debit', amount, note?, transfer_to? }`
+  - If `action = debit` and `transfer_to` is provided, a matching credit is written to the target account.
+- GET `/simple_accounting/api/dump.php` — full data snapshot for offline cache
+- POST `/simple_accounting/api/batch.php` — `{ actions: [...] }` to apply queued offline actions
+
+### PWA (Offline-first enhancements)
+
+- Uses the same CSS (`assets/style.css`) to keep UI consistent.
+- Caches static assets via Service Worker (`pwa/sw.js`).
+- Stores data locally (localStorage JSON) for offline mode.
+- Queues POST actions offline and syncs via `api/batch.php` when back online.
+
+### Desktop (no Laravel)
+
+- NativePHP targets Laravel. To avoid complexity, package the PWA with a lightweight wrapper (Tauri/Electron/PHP Desktop) pointing to:
+  - `http://localhost/simple_accounting/pwa/index.html` (use XAMPP Apache), or
+  - Bundle a tiny PHP server and open the same URL in a native window.
 
 ## License
 

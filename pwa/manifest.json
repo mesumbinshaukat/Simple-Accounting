@@ -1,0 +1,8 @@
+{
+  "name": "Accounting",
+  "short_name": "Accounting",
+  "start_url": "/simple_accounting/pwa/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0ea5e9"
+}

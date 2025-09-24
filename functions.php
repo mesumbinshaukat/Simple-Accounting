@@ -23,6 +23,18 @@ function e($str) {
     return htmlspecialchars((string)$str, ENT_QUOTES, 'UTF-8');
 }
 
+function balance_class($amount) {
+    if ($amount > 0) return 'text-pos';
+    if ($amount < 0) return 'text-neg';
+    return 'text-zero';
+}
+
+function status_badge($amount) {
+    if ($amount > 0) return '<span class="badge pos">To Receive</span>';
+    if ($amount < 0) return '<span class="badge neg">To Return</span>';
+    return '<span class="badge zero">Settled</span>';
+}
+
 // CSRF protection helpers
 function csrf_token() {
     if (empty($_SESSION['csrf_token'])) {
@@ -73,4 +85,49 @@ function find_account($id) {
     $stmt->bind_param('i', $id);
     $stmt->execute();
     return $stmt->get_result()->fetch_assoc();
+}
+
+function get_total_balance() {
+    $sql = "SELECT COALESCE(SUM(CASE WHEN t.type='credit' THEN t.amount WHEN t.type='debit' THEN -t.amount END),0) AS total
+            FROM accounts a
+            LEFT JOIN transactions t ON t.account_id = a.id";
+    $res = db()->query($sql);
+    if ($res && ($row = $res->fetch_assoc())) {
+        return (float)$row['total'];
+    }
+    return 0.0;
+}
+
+function get_open_totals_cached() {
+    static $cache = null;
+    if ($cache !== null) return $cache;
+    $sql = "SELECT
+              COALESCE(SUM(CASE WHEN x.bal > 0 THEN x.bal ELSE 0 END),0) AS total_credit,
+              COALESCE(SUM(CASE WHEN x.bal < 0 THEN -x.bal ELSE 0 END),0) AS total_debit
+            FROM (
+                SELECT a.id,
+                       COALESCE(SUM(CASE WHEN t.type='credit' THEN t.amount WHEN t.type='debit' THEN -t.amount END),0) AS bal
+                FROM accounts a
+                LEFT JOIN transactions t ON t.account_id = a.id
+                GROUP BY a.id
+            ) x
+            WHERE x.bal <> 0";
+    $res = db()->query($sql);
+    $totCred = 0.0; $totDeb = 0.0;
+    if ($res && ($row = $res->fetch_assoc())) {
+        $totCred = (float)$row['total_credit'];
+        $totDeb = (float)$row['total_debit'];
+    }
+    $cache = [$totCred, $totDeb];
+    return $cache;
+}
+
+function get_total_credit() {
+    [$totCred, $totDeb] = get_open_totals_cached();
+    return $totCred;
+}
+
+function get_total_debit() {
+    [$totCred, $totDeb] = get_open_totals_cached();
+    return $totDeb;
 }

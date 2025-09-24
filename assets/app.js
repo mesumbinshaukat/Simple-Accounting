@@ -16,13 +16,20 @@ function addToast(message, type){
   }, 3000);
 }
 
-// Sidebar toggle
+// Sidebar toggle (wait for DOM ready)
 (function(){
-  var btn = document.getElementById('menuToggle');
-  var sidebar = document.getElementById('sidebar');
-  if(btn && sidebar){
-    btn.addEventListener('click', function(){
-      sidebar.classList.toggle('open');
-    });
+  function init(){
+    var btn = document.getElementById('menuToggle');
+    var sidebar = document.getElementById('sidebar');
+    if(btn && sidebar){
+      btn.addEventListener('click', function(){
+        sidebar.classList.toggle('open');
+      });
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 })();
